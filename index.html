@@ -227,7 +227,9 @@ dialog.event-dialog::backdrop{background:rgba(13,41,71,.48);backdrop-filter:blur
 .dialog-date{color:var(--gold);text-transform:uppercase;letter-spacing:.13em;font-size:.72rem;font-weight:700;margin-bottom:8px}
 .dialog-title{font-family:Georgia,serif;color:var(--navy);font-weight:400;font-size:clamp(2rem,5vw,3.1rem);margin:0}
 .dialog-close{width:44px;height:44px;border:1px solid var(--line);background:white;color:var(--navy);font-size:1.3rem;cursor:pointer}
-.dialog-image{width:100%;max-height:360px;object-fit:cover;margin:0 0 20px;border:1px solid var(--line);display:none}
+.dialog-heading{display:flex;gap:16px;align-items:center;min-width:0}
+.dialog-heading-text{min-width:0}
+.dialog-thumb{width:92px;height:92px;flex:0 0 92px;object-fit:cover;border:1px solid var(--gold-light);display:none}
 .dialog-lead{font-size:1rem;margin:0 0 22px}
 .detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px 0}
 .detail-item{background:#f8f2e9;padding:14px}
@@ -408,13 +410,15 @@ dialog.event-dialog::backdrop{background:rgba(13,41,71,.48);backdrop-filter:blur
 <dialog class="event-dialog" id="eventDialog" aria-labelledby="dialogTitle">
   <div class="dialog-inner">
     <div class="dialog-top">
-      <div>
-        <div class="dialog-date" id="dialogDate"></div>
-        <h2 class="dialog-title" id="dialogTitle"></h2>
+      <div class="dialog-heading">
+        <img class="dialog-thumb" id="dialogImage" alt="">
+        <div class="dialog-heading-text">
+          <div class="dialog-date" id="dialogDate"></div>
+          <h2 class="dialog-title" id="dialogTitle"></h2>
+        </div>
       </div>
       <button class="dialog-close" id="dialogClose" type="button" aria-label="Sluiten">×</button>
     </div>
-    <img class="dialog-image" id="dialogImage" alt="">
     <p class="dialog-lead" id="dialogDescription"></p>
     <div class="detail-grid">
       <div class="detail-item"><strong>Tijd</strong><span id="dialogTime"></span></div>
