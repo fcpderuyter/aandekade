@@ -227,6 +227,7 @@ dialog.event-dialog::backdrop{background:rgba(13,41,71,.48);backdrop-filter:blur
 .dialog-date{color:var(--gold);text-transform:uppercase;letter-spacing:.13em;font-size:.72rem;font-weight:700;margin-bottom:8px}
 .dialog-title{font-family:Georgia,serif;color:var(--navy);font-weight:400;font-size:clamp(2rem,5vw,3.1rem);margin:0}
 .dialog-close{width:44px;height:44px;border:1px solid var(--line);background:white;color:var(--navy);font-size:1.3rem;cursor:pointer}
+.dialog-image{width:100%;max-height:360px;object-fit:cover;margin:0 0 20px;border:1px solid var(--line);display:none}
 .dialog-lead{font-size:1rem;margin:0 0 22px}
 .detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px 0}
 .detail-item{background:#f8f2e9;padding:14px}
@@ -398,6 +399,7 @@ dialog.event-dialog::backdrop{background:rgba(13,41,71,.48);backdrop-filter:blur
 <footer>
   <div class="container footer-row">
     <span>© 2026 ...aan de kade</span>
+    <a href="admin.html" style="font-size:.72rem;color:#8b857a;text-decoration:none;letter-spacing:.06em">Beheer</a>
   </div>
 </footer>
 
@@ -412,6 +414,7 @@ dialog.event-dialog::backdrop{background:rgba(13,41,71,.48);backdrop-filter:blur
       </div>
       <button class="dialog-close" id="dialogClose" type="button" aria-label="Sluiten">×</button>
     </div>
+    <img class="dialog-image" id="dialogImage" alt="">
     <p class="dialog-lead" id="dialogDescription"></p>
     <div class="detail-grid">
       <div class="detail-item"><strong>Tijd</strong><span id="dialogTime"></span></div>
@@ -437,6 +440,16 @@ function openEvent(e){
   const d = new Date(e.date+"T12:00:00");
   document.getElementById("dialogDate").textContent = `${String(d.getDate()).padStart(2,"0")} ${months[d.getMonth()]} ${d.getFullYear()}`;
   document.getElementById("dialogTitle").textContent = e.title;
+  const dialogImage = document.getElementById("dialogImage");
+  if(e.image){
+    dialogImage.src = e.image;
+    dialogImage.alt = e.title || "Afbeelding bij agenda-item";
+    dialogImage.style.display = "block";
+  } else {
+    dialogImage.removeAttribute("src");
+    dialogImage.alt = "";
+    dialogImage.style.display = "none";
+  }
   document.getElementById("dialogDescription").textContent = e.description;
   document.getElementById("dialogTime").textContent = e.time;
   document.getElementById("dialogType").textContent = e.type.charAt(0).toUpperCase()+e.type.slice(1);
