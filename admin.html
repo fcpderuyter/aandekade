@@ -47,7 +47,7 @@ textarea{min-height:92px;resize:vertical}
 <div id="loginView" class="login-shell">
   <form class="login-card" id="loginForm">
     <h1>Agenda beheren</h1>
-    <p>Voer het beheerwachtwoord in.</p>
+    <p>Voer het beheerwachtwoord in. Dit scherm is een praktische toegangsdrempel; de echte GitHub-schrijfbeveiliging gebeurt met je persoonlijke toegangstoken.</p>
     <div class="field"><label for="password">Wachtwoord</label><input id="password" type="password" autocomplete="current-password" required></div>
     <button class="btn btn-navy" type="submit">Inloggen</button>
     <div class="status" id="loginStatus"></div>
@@ -61,20 +61,27 @@ textarea{min-height:92px;resize:vertical}
       <a class="btn btn-light" href="index.html">Terug naar website</a>
     </div>
 
-    <div class="notice"><strong>Belangrijk:</strong> deze site draait op GitHub Pages. Daardoor kan een webpagina niet veilig rechtstreeks naar GitHub schrijven met alleen een wachtwoord. Deze beheerpagina maakt daarom een nieuw <code>agenda.js</code>-bestand voor je. Upload dat bestand daarna naar GitHub ter vervanging van het bestaande bestand.</div>
+    <div class="notice"><strong>Publiceren naar GitHub:</strong> vul hieronder een GitHub-toegangstoken in met alleen schrijfrechten voor de inhoud van deze repository. Het token wordt niet opgeslagen en verdwijnt zodra je de pagina sluit of vernieuwt. De knop <em>Publiceer naar GitHub</em> vervangt daarna automatisch <code>agenda.js</code> op de <code>main</code>-branch.</div>
+
+    <div class="field" style="max-width:760px">
+      <label for="githubToken">GitHub toegangstoken</label>
+      <input id="githubToken" type="password" autocomplete="off" placeholder="github_pat_...">
+      <div class="small" style="margin-top:6px">Gebruik bij voorkeur een fine-grained token dat alleen toegang heeft tot repository <code>aandekade</code> en alleen <strong>Contents: Read and write</strong>.</div>
+    </div>
 
     <div class="toolbar">
       <div class="toolbar-group">
         <button class="btn btn-gold" type="button" id="addBtn">+ Nieuw agenda-item</button>
-        <button class="btn btn-navy" type="button" id="downloadBtn">Download agenda.js</button>
+        <button class="btn btn-navy" type="button" id="publishBtn">Publiceer naar GitHub</button>
+        <button class="btn btn-light" type="button" id="downloadBtn">Download agenda.js</button>
       </div>
       <div class="toolbar-group">
-        <a class="btn btn-light" href="https://github.com/fcpderuyter/aandekade/upload/main" target="_blank" rel="noopener">Upload naar GitHub</a>
         <button class="btn btn-light" type="button" id="logoutBtn">Uitloggen</button>
       </div>
     </div>
 
-    <div class="small">De foto wordt verkleind en in het agenda-bestand opgeslagen. Na vervanging van <code>agenda.js</code> wordt de wijziging zichtbaar op de website.</div>
+    <div class="small">De foto wordt verkleind en in het agenda-bestand opgeslagen. Na publiceren kan GitHub Pages enkele minuten nodig hebben voordat de wijziging zichtbaar is.</div>
+    <div class="status" id="publishStatus"></div>
     <div id="items" class="items"></div>
   </div>
 </div>
@@ -188,17 +195,71 @@ async function compressImage(file){
   URL.revokeObjectURL(url);
   return canvas.toDataURL("image/jpeg",0.78);
 }
-function exportAgenda(){
+function buildAgendaText(){
   const clean=items.map(x=>({
     date:x.date||"",title:x.title||"",type:x.type||"muziek",
     detail:x.detail||x.description||"",time:x.time||"",
     audience:x.audience||"",practical:x.practical||"",
     description:x.description||"",...(x.image?{image:x.image}:{})
   }));
-  const text="// AGENDA VAN ...AAN DE KADE\n// Dit bestand is gegenereerd via admin.html.\n\nconst KADE_EVENTS = "+JSON.stringify(clean,null,2)+";\n\nwindow.KADE_EVENTS = KADE_EVENTS;\n";
+  return "// AGENDA VAN ...AAN DE KADE\n// Dit bestand is gegenereerd via admin.html.\n\nconst KADE_EVENTS = "+JSON.stringify(clean,null,2)+";\n\nwindow.KADE_EVENTS = KADE_EVENTS;\n";
+}
+function exportAgenda(){
+  const text=buildAgendaText();
   const blob=new Blob([text],{type:"text/javascript;charset=utf-8"});
   const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="agenda.js"; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),1000);
 }
+function toBase64Utf8(text){
+  const bytes=new TextEncoder().encode(text);
+  let binary="";
+  const chunk=0x8000;
+  for(let i=0;i<bytes.length;i+=chunk){
+    binary+=String.fromCharCode(...bytes.subarray(i,i+chunk));
+  }
+  return btoa(binary);
+}
+async function publishAgenda(){
+  const status=document.getElementById("publishStatus");
+  const token=document.getElementById("githubToken").value.trim();
+  if(!token){
+    status.textContent="Vul eerst je GitHub-toegangstoken in.";
+    return;
+  }
+  const btn=document.getElementById("publishBtn");
+  btn.disabled=true;
+  status.textContent="Bezig met publiceren...";
+  try{
+    const api="https://api.github.com/repos/fcpderuyter/aandekade/contents/agenda.js";
+    const headers={
+      "Accept":"application/vnd.github+json",
+      "Authorization":"Bearer "+token,
+      "X-GitHub-Api-Version":"2022-11-28"
+    };
+    const current=await fetch(api+"?ref=main",{headers});
+    if(!current.ok) throw new Error("Kan agenda.js niet lezen uit GitHub ("+current.status+"). Controleer het token en de rechten.");
+    const info=await current.json();
+    const put=await fetch(api,{
+      method:"PUT",
+      headers:{...headers,"Content-Type":"application/json"},
+      body:JSON.stringify({
+        message:"Agenda bijgewerkt via beheerpagina",
+        content:toBase64Utf8(buildAgendaText()),
+        sha:info.sha,
+        branch:"main"
+      })
+    });
+    if(!put.ok){
+      const detail=await put.text();
+      throw new Error("Publiceren mislukt ("+put.status+"). "+detail.slice(0,240));
+    }
+    status.textContent="Gepubliceerd. GitHub Pages werkt de site nu bij; dit kan enkele minuten duren.";
+  }catch(err){
+    status.textContent=err.message;
+  }finally{
+    btn.disabled=false;
+  }
+}
+document.getElementById("publishBtn").addEventListener("click",publishAgenda);
 document.getElementById("downloadBtn").addEventListener("click",exportAgenda);
 </script>
 </body>
