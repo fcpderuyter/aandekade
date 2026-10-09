@@ -15,3 +15,18 @@ const KADE_EVENTS = [
 ];
 
 window.KADE_EVENTS = KADE_EVENTS;
+
+// Verberg de Instagram-vermelding onderaan en de extra footerlinks.
+document.querySelectorAll(".cta-item").forEach(item => {
+  if (item.textContent.trim().toLowerCase().startsWith("instagram")) {
+    item.remove();
+  }
+});
+
+document.querySelectorAll("footer .footer-row span").forEach(item => {
+  if (item.textContent.toLowerCase().includes("agenda") &&
+      item.textContent.toLowerCase().includes("verhuur") &&
+      item.textContent.toLowerCase().includes("contact")) {
+    item.remove();
+  }
+});
