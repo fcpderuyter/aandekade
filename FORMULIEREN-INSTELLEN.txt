@@ -1,0 +1,5 @@
+Nog doen vóór livegang:
+
+1. Zoek REPLACE_ME_CONTACT in index.html en vervang die door je Formspree contact-ID.
+2. Zoek REPLACE_ME_BOOKING in index.html en vervang die door je Formspree boekings-ID.
+3. Test beide formulieren op GitHub Pages.
