@@ -204,12 +204,20 @@ header{
 .rental-layout .section-head{display:block;margin:0}
 .rental-layout .section-head h2{margin-bottom:18px}
 .rental-layout .section-head p{max-width:390px;line-height:1.65}
+.rental-layout .section-head .inline-link{display:inline-block;margin-top:18px}
 .rental-layout .forms-grid{max-width:none}
 .rental-layout .form-card{max-width:760px}
+.contact-layout{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(240px,.72fr);gap:58px;align-items:start}
+.contact-layout .forms-grid{max-width:none}
+.contact-layout .form-card{max-width:760px}
+.contact-layout .section-head{display:block;margin:0}
+.contact-layout .section-head h2{margin-bottom:18px}
+.contact-layout .section-head p{max-width:390px;line-height:1.65}
+
 @media(max-width:900px){
-  .rental-layout{grid-template-columns:1fr;gap:30px}
-  .rental-layout .section-head p{max-width:650px}
-  .rental-layout .form-card{max-width:none}
+  .rental-layout,.contact-layout{grid-template-columns:1fr;gap:30px}
+  .rental-layout .section-head p,.contact-layout .section-head p{max-width:650px}
+  .rental-layout .form-card,.contact-layout .form-card{max-width:none}
 }
 
 .form-card{
@@ -383,16 +391,14 @@ dialog.event-dialog::backdrop{background:rgba(13,41,71,.48);backdrop-filter:blur
     <div class="section-head">
       <h2>Verhuur</h2>
       <p>Aan de Kade is te huur als rustige en sfeervolle plek voor repetities, lezingen, workshops, kleine voorstellingen, vergaderingen, overleggen en andere kleinschalige bijeenkomsten. De intieme setting zorgt voor aandacht, concentratie en prettig contact.</p>
+      <button class="inline-link" type="button" id="facilitiesOpen">Bekijk hier de voorzieningen →</button>
     </div>
     <div class="forms-grid">
       <form class="form-card" id="bookingForm"
         action="https://formspree.io/f/xqpeqrqw"
         method="POST">
         <input type="hidden" name="_subject" value="Nieuwe boekingsaanvraag via ...aan de kade">
-        <div class="form-title-row">
-          <h3>Verhuur</h3>
-          <button class="inline-link" type="button" id="facilitiesOpen">Bekijk voorzieningen</button>
-        </div>
+        <h3>Verhuur</h3>
         <div class="form-note">Vul hieronder uw gewenste datum en tijden in. De reservering is pas definitief nadat u van ons een bevestiging heeft ontvangen.</div>
         <div class="row">
           <div class="field"><label for="bookName">Naam</label><input id="bookName" name="naam" autocomplete="name" required></div>
@@ -416,11 +422,7 @@ dialog.event-dialog::backdrop{background:rgba(13,41,71,.48);backdrop-filter:blur
 </section>
 
 <section class="section" id="contact">
-  <div class="container">
-    <div class="section-head">
-      <h2>Contact</h2>
-      <p>Heeft u een vraag of wilt u eerst overleggen? Stuur ons dan een bericht.</p>
-    </div>
+  <div class="container contact-layout">
     <div class="forms-grid">
       <form class="form-card" id="contactForm"
         action="https://formspree.io/f/mkjordrg"
@@ -435,6 +437,10 @@ dialog.event-dialog::backdrop{background:rgba(13,41,71,.48);backdrop-filter:blur
         <div class="field"><label><input type="checkbox" name="privacy_akkoord" value="ja" required style="width:auto;margin-right:8px"> Ik ga ermee akkoord dat mijn gegevens worden gebruikt om mijn bericht te beantwoorden.</label></div>
         <div class="fake-row"><button class="btn btn-navy" type="submit">Verstuur bericht</button></div>
       </form>
+    </div>
+    <div class="section-head">
+      <h2>Contact</h2>
+      <p>Heeft u een vraag of wilt u eerst overleggen? Stuur ons dan een bericht.</p>
     </div>
   </div>
 </section>
