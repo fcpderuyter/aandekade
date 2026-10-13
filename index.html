@@ -200,6 +200,18 @@ header{
 .tag{color:var(--navy);font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;white-space:nowrap}
 
 .forms-grid{display:grid;grid-template-columns:1fr;gap:28px;max-width:820px}
+.rental-layout{display:grid;grid-template-columns:minmax(240px,.72fr) minmax(0,1.45fr);gap:58px;align-items:start}
+.rental-layout .section-head{display:block;margin:0}
+.rental-layout .section-head h2{margin-bottom:18px}
+.rental-layout .section-head p{max-width:390px;line-height:1.65}
+.rental-layout .forms-grid{max-width:none}
+.rental-layout .form-card{max-width:760px}
+@media(max-width:900px){
+  .rental-layout{grid-template-columns:1fr;gap:30px}
+  .rental-layout .section-head p{max-width:650px}
+  .rental-layout .form-card{max-width:none}
+}
+
 .form-card{
   background:var(--paper);border:1px solid var(--line);padding:30px;
 }
@@ -367,7 +379,7 @@ dialog.event-dialog::backdrop{background:rgba(13,41,71,.48);backdrop-filter:blur
 </section>
 
 <section class="section alt" id="verhuur">
-  <div class="container">
+  <div class="container rental-layout">
     <div class="section-head">
       <h2>Verhuur</h2>
       <p>Aan de Kade is te huur als rustige en sfeervolle plek voor repetities, lezingen, workshops, kleine voorstellingen, vergaderingen, overleggen en andere kleinschalige bijeenkomsten. De intieme setting zorgt voor aandacht, concentratie en prettig contact.</p>
