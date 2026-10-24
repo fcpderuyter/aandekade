@@ -204,7 +204,7 @@ header{
 .rental-layout .section-head{display:block;margin:0}
 .rental-layout .section-head h2{margin-bottom:18px}
 .rental-layout .section-head p{max-width:390px;line-height:1.65}
-.rental-layout .section-head .inline-link{display:inline-block;margin-top:18px}
+.rental-layout .section-head .inline-link{display:block;width:max-content;margin-top:14px;text-align:left}
 .rental-layout .forms-grid{max-width:none}
 .rental-layout .form-card{max-width:760px}
 .contact-layout{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(240px,.72fr);gap:58px;align-items:start}
@@ -272,7 +272,15 @@ dialog.event-dialog::backdrop{background:rgba(13,41,71,.48);backdrop-filter:blur
 .inline-link{background:none;border:0;padding:0;color:var(--gold);text-decoration:underline;text-underline-offset:3px;cursor:pointer;font-size:.88rem}
 .facility-list{display:grid;gap:10px;margin:8px 0 0;padding:0;list-style:none}
 .facility-list li{padding:13px 14px;background:#f8f2e9;border-left:3px solid var(--gold)}
-.facility-list strong{color:var(--navy)}\n.facility-note{margin:18px 0 0;padding-top:16px;border-top:1px solid var(--gold-light);font-size:.92rem;line-height:1.65;color:var(--text)}
+.facility-list strong{color:var(--navy)}
+.price-table{width:100%;border-collapse:collapse;margin:16px 0 24px;font-size:.94rem}
+.price-table th,.price-table td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left}
+.price-table th{color:var(--navy);background:#f8f2e9}
+.price-table th:last-child,.price-table td:last-child{text-align:right;white-space:nowrap}
+.price-dialog .dialog-inner{max-height:85vh;overflow-y:auto}
+.price-dialog h3{font-family:Georgia,serif;color:var(--navy);font-weight:400;font-size:1.35rem;margin:24px 0 9px}
+.price-dialog p{margin:10px 0}
+.price-dialog ul{padding-left:21px}\n.facility-note{margin:18px 0 0;padding-top:16px;border-top:1px solid var(--gold-light);font-size:.92rem;line-height:1.65;color:var(--text)}
 
 .small{font-size:.8rem;color:#797a78}
 .toast{
@@ -392,6 +400,7 @@ dialog.event-dialog::backdrop{background:rgba(13,41,71,.48);backdrop-filter:blur
       <h2>Verhuur</h2>
       <p>Aan de Kade is te huur als rustige en sfeervolle plek voor repetities, lezingen, workshops, kleine voorstellingen, vergaderingen, overleggen en andere kleinschalige bijeenkomsten. De intieme setting zorgt voor aandacht, concentratie en prettig contact.</p>
       <button class="inline-link" type="button" id="facilitiesOpen">Bekijk hier de voorzieningen →</button>
+      <button class="inline-link" type="button" id="pricesOpen">Bekijk hier de prijzen →</button>
     </div>
     <div class="forms-grid">
       <form class="form-card" id="bookingForm"
@@ -488,6 +497,41 @@ dialog.event-dialog::backdrop{background:rgba(13,41,71,.48);backdrop-filter:blur
       <li><strong>3 statafels met zwarte rok</strong></li>
     </ul>
     <p class="facility-note">Koffie, thee &amp; bar in overleg<br>(Verhuur voor Max 50 personen)</p>
+  </div>
+</dialog>
+
+<dialog class="event-dialog price-dialog" id="pricesDialog" aria-labelledby="pricesTitle">
+  <div class="dialog-inner">
+    <div class="dialog-top">
+      <div>
+        <div class="dialog-date">Verhuur</div>
+        <h2 class="dialog-title" id="pricesTitle">Prijslijst zaalverhuur 2026/2027</h2>
+      </div>
+      <button class="dialog-close" id="pricesClose" type="button" aria-label="Sluiten">×</button>
+    </div>
+    <p class="dialog-lead">Een sfeervolle, intieme studio voor kleine concerten, koorrepetities, vergaderingen, lezingen, workshops en bijzondere ontmoetingen.</p>
+    <h3>Zaalhuur – inclusief gestemde vleugel en 60 stoelen</h3>
+    <table class="price-table">
+      <thead><tr><th scope="col">Huurperiode</th><th scope="col">Tarief</th></tr></thead>
+      <tbody>
+        <tr><td>2 uur</td><td>€ 125</td></tr>
+        <tr><td>Dagdeel – 4 uur</td><td>€ 195</td></tr>
+        <tr><td>Avond – 4 uur</td><td>€ 225</td></tr>
+        <tr><td>Hele dag – 8 uur</td><td>€ 350</td></tr>
+        <tr><td>Dag en avond – 12 uur</td><td>€ 495</td></tr>
+      </tbody>
+    </table>
+    <h3>Vaste repetities en terugkerende huurders</h3>
+    <p>Voor koren, ensembles en andere organisaties die regelmatig gebruikmaken van de studio, bieden wij een speciaal tarief:</p>
+    <p><strong>€ 110 per repetitie van 2 uur bij minimaal 10 boekingen.</strong></p>
+    <h3>Inbegrepen</h3>
+    <ul>
+      <li>Gebruik van de gestemde vleugel</li>
+      <li>60 beschikbare stoelen</li>
+      <li>Verwarming, verlichting en basisvoorzieningen</li>
+    </ul>
+    <p>Koffie, thee en barfaciliteiten: altijd in overleg.</p>
+    <p>Voor bijzondere culturele initiatieven, terugkerende bijeenkomsten of afwijkende huurperiodes maken we graag een passende afspraak.</p>
   </div>
 </dialog>
 
@@ -594,6 +638,14 @@ document.getElementById("facilitiesOpen").addEventListener("click",()=>{
 });
 document.getElementById("facilitiesClose").addEventListener("click",()=>facilitiesDialog.close());
 facilitiesDialog.addEventListener("click",ev=>{if(ev.target===facilitiesDialog) facilitiesDialog.close()});
+
+const pricesDialog=document.getElementById("pricesDialog");
+document.getElementById("pricesOpen").addEventListener("click",()=>{
+  if(typeof pricesDialog.showModal==="function") pricesDialog.showModal();
+  else pricesDialog.setAttribute("open","");
+});
+document.getElementById("pricesClose").addEventListener("click",()=>pricesDialog.close());
+pricesDialog.addEventListener("click",ev=>{if(ev.target===pricesDialog) pricesDialog.close()});
 
 document.getElementById("dialogClose").addEventListener("click",()=>eventDialog.close());
 eventDialog.addEventListener("click",ev=>{if(ev.target===eventDialog) eventDialog.close()});
